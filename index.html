@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DexWatch Settings</title>
+<style>
+  :root {
+    --bg:      #0d0d0d;
+    --surface: #1a1a1a;
+    --border:  #2e2e2e;
+    --accent:  #55cdff;
+    --green:   #55cd82;
+    --amber:   #ffc828;
+    --red:     #ff5050;
+    --text:    #f0f0f0;
+    --muted:   #888;
+    --radius:  12px;
+    --font:    -apple-system, "SF Pro Text", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    padding-bottom: 48px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 20px 16px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 20px; font-weight: 700; }
+  header p  { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* ── Section ── */
+  .section { margin: 14px 14px 0; }
+  .section-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 4px 6px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* ── Field row ── */
+  .field {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .field:last-child { border-bottom: none; }
+  .field label { font-size: 13px; font-weight: 500; }
+  .field .hint  { font-size: 11px; color: var(--muted); }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  select {
+    background: #111;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 15px;
+    padding: 9px 12px;
+    width: 100%;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
+
+  /* ── Toggle row ── */
+  .toggle-row {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-info label { font-size: 13px; font-weight: 500; }
+  .toggle-info p     { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0;
+    background: #333; border-radius: 26px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .slider::before {
+    content: ""; position: absolute;
+    width: 20px; height: 20px;
+    left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .switch input:checked + .slider { background: var(--accent); }
+  .switch input:checked + .slider::before { transform: translateX(18px); }
+
+  /* ── Threshold rows ── */
+  .thresh-row {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .thresh-row:last-child { border-bottom: none; }
+  .thresh-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .thresh-row label { font-size: 13px; font-weight: 500; flex: 1; }
+  .thresh-row input[type="number"] {
+    background: #111; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 15px;
+    padding: 7px 10px; width: 80px; text-align: right; outline: none;
+    -webkit-appearance: none;
+  }
+  .thresh-row input:focus { border-color: var(--accent); }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    margin: 12px 14px 0;
+    background: #1a1200;
+    border: 1px solid #3a2e00;
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 12px; color: #c8a030; line-height: 1.5;
+  }
+  .disclaimer strong { color: var(--amber); }
+
+  /* ── Buttons ── */
+  .btn-row { padding: 18px 14px 0; display: flex; gap: 10px; }
+  .btn {
+    flex: 1; padding: 13px 10px;
+    border-radius: 10px; font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer;
+  }
+  .btn-save   { background: var(--accent); color: #000; }
+  .btn-cancel { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .btn-save:active   { opacity: 0.85; }
+  .btn-cancel:active { opacity: 0.75; }
+
+  /* ── Error message ── */
+  #error-msg {
+    display: none;
+    margin: 10px 14px 0;
+    background: #2a0a0a; border: 1px solid #5a1a1a;
+    border-radius: var(--radius); padding: 10px 14px;
+    font-size: 13px; color: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DexWatch</h1>
+  <p>Dexcom Share CGM for Pebble Time 2</p>
+</header>
+
+<div class="disclaimer">
+  <strong>⚠ Medical Disclaimer</strong><br>
+  This app is not a medical device. Do not make treatment decisions based solely on readings shown here. Always verify with your CGM receiver or an approved app.
+</div>
+
+<!-- Dexcom Account -->
+<div class="section">
+  <div class="section-label">Dexcom Share Account</div>
+  <div class="card">
+    <div class="field">
+      <label>Username / Email</label>
+      <input type="text" id="username" autocomplete="off" autocorrect="off"
+             autocapitalize="none" spellcheck="false" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <label>Outside US</label>
+        <p>Use international Dexcom Share server</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="ous">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Display -->
+<div class="section">
+  <div class="section-label">Display</div>
+  <div class="card">
+    <div class="field">
+      <label>Glucose Unit</label>
+      <select id="unit">
+        <option value="mgdl">mg/dL</option>
+        <option value="mmol">mmol/L</option>
+      </select>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <label>24-Hour Clock</label>
+        <p>Show time in 24h format (default: 12h)</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="use24Hour">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="field">
+      <label>Graph Window</label>
+      <select id="graphMinutes">
+        <option value="60">1 hour</option>
+        <option value="120">2 hours</option>
+        <option value="180" selected>3 hours</option>
+        <option value="360">6 hours</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Thresholds -->
+<div class="section">
+  <div class="section-label">Thresholds (mg/dL)</div>
+  <div class="card">
+    <div class="thresh-row">
+      <div class="thresh-dot" style="background:var(--amber)"></div>
+      <label>High</label>
+      <input type="number" id="highThreshold" min="120" max="400" value="180">
+    </div>
+    <div class="thresh-row">
+      <div class="thresh-dot" style="background:var(--red)"></div>
+      <label>Low</label>
+      <input type="number" id="lowThreshold" min="40" max="100" value="70">
+    </div>
+    <div class="thresh-row">
+      <div class="thresh-dot" style="background:#cc2020"></div>
+      <label>Urgent Low</label>
+      <input type="number" id="urgentLow" min="40" max="70" value="55">
+    </div>
+    <div class="thresh-row">
+      <div class="thresh-dot" style="background:var(--accent)"></div>
+      <label>Target / Goal</label>
+      <input type="number" id="targetGlucose" min="60" max="200" value="110">
+    </div>
+    <div class="field">
+      <span class="hint">Thresholds are always stored in mg/dL even when displaying mmol/L.</span>
+    </div>
+  </div>
+</div>
+
+<div id="error-msg"></div>
+
+<div class="btn-row">
+  <button class="btn btn-cancel" id="btnCancel">Cancel</button>
+  <button class="btn btn-save"   id="btnSave">Save &amp; Sync</button>
+</div>
+
+<script>
+(function() {
+  // Parse config from URL
+  var config = {};
+  try {
+    var m = location.search.match(/[?&]config=([^&]+)/);
+    if (m) config = JSON.parse(decodeURIComponent(m[1]));
+  } catch(e) {}
+
+  function el(id) { return document.getElementById(id); }
+
+  // Populate fields from saved config
+  if (config.username)               el("username").value        = config.username;
+  if (config.password)               el("password").value        = config.password;
+  if (config.ous)                    el("ous").checked            = !!config.ous;
+  if (config.unit)                   el("unit").value             = config.unit;
+  if (config.use24Hour)              el("use24Hour").checked      = !!config.use24Hour;
+  if (config.graphMinutes)           el("graphMinutes").value     = String(config.graphMinutes);
+  if (config.highThreshold)          el("highThreshold").value   = config.highThreshold;
+  if (config.lowThreshold)           el("lowThreshold").value    = config.lowThreshold;
+  if (config.urgentLow)              el("urgentLow").value       = config.urgentLow;
+  if (config.targetGlucose)          el("targetGlucose").value   = config.targetGlucose;
+
+  function showError(msg) {
+    var e = el("error-msg");
+    e.textContent = msg;
+    e.style.display = "block";
+    setTimeout(function() { e.style.display = "none"; }, 4000);
+  }
+
+  el("btnSave").addEventListener("click", function() {
+    var settings = {
+      username:      el("username").value.trim(),
+      password:      el("password").value,
+      ous:           el("ous").checked,
+      unit:          el("unit").value,
+      use24Hour:     el("use24Hour").checked,
+      graphMinutes:  parseInt(el("graphMinutes").value, 10),
+      highThreshold: parseInt(el("highThreshold").value, 10),
+      lowThreshold:  parseInt(el("lowThreshold").value, 10),
+      urgentLow:     parseInt(el("urgentLow").value, 10),
+      targetGlucose: parseInt(el("targetGlucose").value, 10)
+    };
+
+    // Validate
+    if (!settings.username || !settings.password) {
+      showError("Username and password are required.");
+      return;
+    }
+    if (settings.urgentLow >= settings.lowThreshold) {
+      showError("Urgent Low must be below the Low threshold.");
+      return;
+    }
+    if (settings.lowThreshold >= settings.highThreshold) {
+      showError("Low threshold must be below the High threshold.");
+      return;
+    }
+    if (settings.targetGlucose < 60 || settings.targetGlucose > 300) {
+      showError("Target must be between 60 and 300 mg/dL.");
+      return;
+    }
+
+    var encoded = encodeURIComponent(JSON.stringify(settings));
+    if (window.Pebble) {
+      window.Pebble.sendConfigData(encoded);
+    } else {
+      // Browser preview
+      console.log("Settings:", settings);
+      alert("Saved! (browser preview — not connected to watch)");
+    }
+  });
+
+  el("btnCancel").addEventListener("click", function() {
+    if (window.Pebble) {
+      window.Pebble.sendConfigData("");
+    } else {
+      window.close();
+    }
+  });
+})();
+</script>
+</body>
+</html>
