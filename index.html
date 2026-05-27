@@ -283,6 +283,21 @@
 
   function el(id) { return document.getElementById(id); }
 
+  // Read the return_to URL injected by the Pebble app
+  // Defaults to pebblejs://close# which works on real watches
+  function getQueryParam(name, fallback) {
+    var query = location.search.substring(1);
+    var pairs = query.split('&');
+    for (var i = 0; i < pairs.length; i++) {
+      var pair = pairs[i].split('=');
+      if (decodeURIComponent(pair[0]) === name) {
+        return decodeURIComponent(pair[1] || '');
+      }
+    }
+    return fallback;
+  }
+  var returnTo = getQueryParam('return_to', 'pebblejs://close#');
+
   // Populate fields from saved config
   if (config.username)               el("username").value        = config.username;
   if (config.password)               el("password").value        = config.password;
@@ -335,21 +350,11 @@
     }
 
     var encoded = encodeURIComponent(JSON.stringify(settings));
-    if (window.Pebble) {
-      window.Pebble.sendConfigData(encoded);
-    } else {
-      // Browser preview
-      console.log("Settings:", settings);
-      alert("Saved! (browser preview — not connected to watch)");
-    }
+    document.location = returnTo + encoded;
   });
 
   el("btnCancel").addEventListener("click", function() {
-    if (window.Pebble) {
-      window.Pebble.sendConfigData("");
-    } else {
-      window.close();
-    }
+    document.location = returnTo;
   });
 })();
 </script>
